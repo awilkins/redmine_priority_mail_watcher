@@ -1,0 +1,5 @@
+= priority_mail_watcher
+
+This plugin watches the 'ts' project and attaches watches to tickets when their priority changes to P1.
+
+It's non-configurable and very specific to our needs.
