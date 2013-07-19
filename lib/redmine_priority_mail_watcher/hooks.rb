@@ -1,6 +1,6 @@
 module PriorityMailWatcher
   
-  ALERT_USER_MAILS = [ 'adrian.wilkins@nhs.net', 'tshird@nhs.net', 'chrismorris@nhs.net', 'ravi.natarajan@nhs.net' ]
+  ALERT_USER_MAILS = [ 'adrian.wilkins@nhs.net', 'tshird@nhs.net', 'chrismorris@nhs.net' ]
   
   class Hooks < Redmine::Hook::Listener
     
