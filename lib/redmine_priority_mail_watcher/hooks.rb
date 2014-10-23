@@ -1,17 +1,27 @@
 module PriorityMailWatcher
   
+  WATCH_PROJECT_ID = 'ts'
+  TOP_PRIORITY_NAME = 'P1 (Critical)'
   ALERT_USER_MAILS = [ 'adrian.wilkins@nhs.net', 'tshird@nhs.net', 'chrismorris@nhs.net' ]
   
   class Hooks < Redmine::Hook::Listener
+    
+    # Test to see if the issue is a top priority
+	def is_top_priority(issue)
+      tech_services_project = Project.find_by_identifier(WATCH_PROJECT_ID)
+      top_priority = IssuePriority.find_by_name(TOP_PRIORITY_NAME)
+      
+      if issue.project == tech_services_project && issue.priority == top_priority
+		return true
+      end
+	end
     
     # For brand new issues, add the "Four Horsemen" if it's a P1
     def controller_issues_new_before_save(context={ })
       journal = context[:journal]
       issue = context[:issue]
-      tech_services_project = Project.find_by_identifier('ts')
-      top_priority = IssuePriority.find_by_name('P1 (Critical)')
       
-      if issue.project == tech_services_project && issue.priority == top_priority
+      if is_top_priority(issue)
         add_watchers_if_not_subscribed(issue, journal, ALERT_USER_MAILS)
       end
       
@@ -21,11 +31,8 @@ module PriorityMailWatcher
     def controller_issues_edit_before_save(context={ })
       issue = context[:issue]
       journal = context[:journal]
-      params = context[:params]
-      tech_services_project = Project.find_by_identifier('ts')
-      top_priority = IssuePriority.find_by_name('P1 (Critical)')
       
-      if issue.project == tech_services_project && issue.priority == top_priority
+      if is_top_priority(issue)
         
         # We are in the middle of the issue save transaction so we can fetch the old one
         old_issue = Issue.find(issue.id)
